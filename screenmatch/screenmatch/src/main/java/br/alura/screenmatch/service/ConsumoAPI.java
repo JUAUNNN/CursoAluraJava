@@ -58,12 +58,28 @@ public class ConsumoAPI {
         System.out.println(dadosEpisodios);
 
         List<DadosTemporada> temporadas = new ArrayList<>();
+for(int i = 1; i<= dados.totalTemporadas(); i++) {
 
-        for(int i = 1; i<= dados.totalTemporadas(); i++) {
-            DadosTemporada dadosTemporada = converteDados.obterDados(json, DadosTemporada.class);
-            temporadas.add(dadosTemporada);
-        }
-        temporadas.forEach(System.out::println);
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(ENDERECO + buscar.replace(" ", "+") + "&Season=" + i + API_KEY))
+                    .build();
+            HttpResponse<String> response = null;
+                response = client
+                        .send(request, HttpResponse.BodyHandlers.ofString());
+               String json1 = response.body();
+
+            DadosTemporada dadosTemporada = converteDados.obterDados(json1, DadosTemporada.class);
+            temporadas.add(dadosTemporada);}
+
+            temporadas.forEach(System.out::println);
+
+        /*for (int i = 0; i < dados.totalTemporadas(); i++) {
+            List<DadosEpisodios> episodiosTemporada = temporadas.get(i).episodios();
+            for (int j = 0; j < episodiosTemporada.size() ; j++) {
+                System.out.println(episodiosTemporada.get(j).titulo());
+            }*/
+        temporadas.forEach(t -> t.episodios().forEach(e -> System.out.println(e.titulo())));
 
     }
 }
